@@ -46,10 +46,9 @@ namespace Modbus.ModbusFunctions
         {
             //TO DO: IMPLEMENT
             Dictionary<Tuple<PointType, ushort>, ushort> dict = new Dictionary<Tuple<PointType, ushort>, ushort>();
- 
             ModbusReadCommandParameters modbusRead = this.CommandParameters as ModbusReadCommandParameters;
             
-            ushort address = modbusRead.StartAddress;
+            ushort address = ((ModbusReadCommandParameters)CommandParameters).StartAddress;
             ushort byteCount = response[8];
             ushort value;
             

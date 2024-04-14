@@ -1,6 +1,5 @@
 ﻿using Common;
 using System;
-using System.Collections.Generic;
 using System.Threading;
 
 namespace ProcessingModule
@@ -9,12 +8,12 @@ namespace ProcessingModule
     /// Class containing logic for automated work.
     /// </summary>
     public class AutomationManager : IAutomationManager, IDisposable
-	{
-		private Thread automationWorker;
+    {
+        private Thread automationWorker;
         private AutoResetEvent automationTrigger;
         private IStorage storage;
-		private IProcessingManager processingManager;
-		private int delayBetweenCommands;
+        private IProcessingManager processingManager;
+        private int delayBetweenCommands;
         private IConfiguration configuration;
 
         /// <summary>
@@ -25,9 +24,9 @@ namespace ProcessingModule
         /// <param name="automationTrigger">The automation trigger.</param>
         /// <param name="configuration">The configuration.</param>
         public AutomationManager(IStorage storage, IProcessingManager processingManager, AutoResetEvent automationTrigger, IConfiguration configuration)
-		{
-			this.storage = storage;
-			this.processingManager = processingManager;
+        {
+            this.storage = storage;
+            this.processingManager = processingManager;
             this.configuration = configuration;
             this.automationTrigger = automationTrigger;
         }
@@ -36,38 +35,38 @@ namespace ProcessingModule
         /// Initializes and starts the threads.
         /// </summary>
 		private void InitializeAndStartThreads()
-		{
-			InitializeAutomationWorkerThread();
-			StartAutomationWorkerThread();
-		}
+        {
+            InitializeAutomationWorkerThread();
+            StartAutomationWorkerThread();
+        }
 
         /// <summary>
         /// Initializes the automation worker thread.
         /// </summary>
 		private void InitializeAutomationWorkerThread()
-		{
-			automationWorker = new Thread(AutomationWorker_DoWork);
-			automationWorker.Name = "Aumation Thread";
-		}
+        {
+            automationWorker = new Thread(AutomationWorker_DoWork);
+            automationWorker.Name = "Aumation Thread";
+        }
 
         /// <summary>
         /// Starts the automation worker thread.
         /// </summary>
 		private void StartAutomationWorkerThread()
-		{
-			automationWorker.Start();
-		}
+        {
+            automationWorker.Start();
+        }
 
 
-		private void AutomationWorker_DoWork()
-		{
-			//while (!disposedValue)
-			//{                
+        private void AutomationWorker_DoWork()
+        {
+            //while (!disposedValue)
+            //{
             //}
-		}
+        }
 
-		#region IDisposable Support
-		private bool disposedValue = false; // To detect redundant calls
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
 
 
         /// <summary>
@@ -75,37 +74,37 @@ namespace ProcessingModule
         /// </summary>
         /// <param name="disposing">Indication if managed objects should be disposed.</param>
 		protected virtual void Dispose(bool disposing)
-		{
-			if (!disposedValue)
-			{
-				if (disposing)
-				{
-				}
-				disposedValue = true;
-			}
-		}
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                }
+                disposedValue = true;
+            }
+        }
 
 
-		// This code added to correctly implement the disposable pattern.
-		public void Dispose()
-		{
-			// Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-			Dispose(true);
-			// GC.SuppressFinalize(this);
-		}
+        // This code added to correctly implement the disposable pattern.
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(true);
+            // GC.SuppressFinalize(this);
+        }
 
         /// <inheritdoc />
         public void Start(int delayBetweenCommands)
-		{
-			this.delayBetweenCommands = delayBetweenCommands*1000;
+        {
+            this.delayBetweenCommands = delayBetweenCommands * 1000;
             InitializeAndStartThreads();
-		}
+        }
 
         /// <inheritdoc />
         public void Stop()
-		{
-			Dispose();
-		}
-		#endregion
-	}
+        {
+            Dispose();
+        }
+        #endregion
+    }
 }

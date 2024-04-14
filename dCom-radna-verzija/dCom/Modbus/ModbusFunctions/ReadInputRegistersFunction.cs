@@ -24,28 +24,21 @@ namespace Modbus.ModbusFunctions
         /// <inheritdoc />
         public override byte[] PackRequest()
         {
-            Console.WriteLine("Request started");
-            // ModbusReadCommandParameters nam treba
-            byte[] recVal = new byte[12];
-
-            recVal[1] = (byte)(CommandParameters.TransactionId);
-            recVal[0] = (byte)(CommandParameters.TransactionId >> 8);
-            recVal[3] = (byte)(CommandParameters.ProtocolId);
-            recVal[2] = (byte)(CommandParameters.ProtocolId >> 8);
-            recVal[5] = (byte)(CommandParameters.Length);
-            recVal[4] = (byte)(CommandParameters.Length >> 8);
-            recVal[6] = CommandParameters.UnitId;
-            recVal[7] = CommandParameters.FunctionCode;
-            recVal[9] = (byte)(((ModbusReadCommandParameters)CommandParameters).StartAddress);
-            recVal[8] = (byte)(((ModbusReadCommandParameters)CommandParameters).StartAddress >> 8);
-            recVal[11] = (byte)(((ModbusReadCommandParameters)CommandParameters).Quantity);
-            recVal[10] = (byte)(((ModbusReadCommandParameters)CommandParameters).Quantity >> 8);
-            //Head message
-
-            // Data message
-
-            return recVal;
-            Console.WriteLine("Request ended");
+            //TO DO: IMPLEMENT
+            byte[] returnValue = new byte[12];
+            returnValue[1] = (byte)(CommandParameters.TransactionId);
+            returnValue[0] = (byte)(CommandParameters.TransactionId >> 8);
+            returnValue[3] = (byte)(CommandParameters.ProtocolId);
+            returnValue[2] = (byte)(CommandParameters.ProtocolId >> 8);
+            returnValue[5] = (byte)(CommandParameters.Length);
+            returnValue[4] = (byte)(CommandParameters.Length >> 8);
+            returnValue[6] = CommandParameters.UnitId;
+            returnValue[7] = CommandParameters.FunctionCode;
+            returnValue[9] = (byte)(((ModbusReadCommandParameters)CommandParameters).StartAddress);
+            returnValue[8] = (byte)(((ModbusReadCommandParameters)CommandParameters).StartAddress >> 8);
+            returnValue[11] = (byte)(((ModbusReadCommandParameters)CommandParameters).Quantity);
+            returnValue[10] = (byte)(((ModbusReadCommandParameters)CommandParameters).Quantity >> 8);
+            return returnValue;
         }
 
         /// <inheritdoc />
@@ -53,19 +46,19 @@ namespace Modbus.ModbusFunctions
         {
             //TO DO: IMPLEMENT
             Dictionary<Tuple<PointType, ushort>, ushort> dict = new Dictionary<Tuple<PointType, ushort>, ushort>();
-
             ModbusReadCommandParameters modbusRead = this.CommandParameters as ModbusReadCommandParameters;
 
-            ushort address = modbusRead.StartAddress;
+            ushort address = ((ModbusReadCommandParameters)CommandParameters).StartAddress;
             ushort byteCount = response[8];
             ushort value;
 
             for (int i = 0; i < byteCount; i += 2)
             {
-                value = BitConverter.ToUInt16(response, 9 + i); // konvertujemo niz bitova u unit
-                value = (ushort)IPAddress.NetworkToHostOrder((short)value); // citamo sa mreze
-                dict.Add(new Tuple<PointType, ushort>(PointType.ANALOG_OUTPUT, address), value); // dodajemo u recnik
-                address++; // prelazimo na sledecu adresu
+                value = BitConverter.ToUInt16(response, 9 + i);
+                value = (ushort)IPAddress.NetworkToHostOrder((short)value);
+                dict.Add(new Tuple<PointType, ushort>(PointType.ANALOG_INPUT, address), value);
+                address++;
+
             }
 
             return dict;
