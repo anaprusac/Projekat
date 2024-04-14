@@ -1,5 +1,6 @@
 ﻿using Common;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace ProcessingModule
@@ -61,8 +62,8 @@ namespace ProcessingModule
 		private void AutomationWorker_DoWork()
 		{
 			//while (!disposedValue)
-			//{
-			//}
+			//{                
+            //}
 		}
 
 		#region IDisposable Support
