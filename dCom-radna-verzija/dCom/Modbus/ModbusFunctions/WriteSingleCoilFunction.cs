@@ -46,12 +46,12 @@ namespace Modbus.ModbusFunctions
             //TO DO: IMPLEMENT
             Dictionary<Tuple<PointType, ushort>, ushort> dict = new Dictionary<Tuple<PointType, ushort>, ushort>();
 
-            short adresa = BitConverter.ToInt16(response, 8);
-            short vrednost = BitConverter.ToInt16(response, 10);
+            short address = BitConverter.ToInt16(response, 8);
+            short value = BitConverter.ToInt16(response, 10);
 
-            adresa = IPAddress.NetworkToHostOrder(adresa);
-            vrednost = IPAddress.NetworkToHostOrder(vrednost);
-            dict.Add(new Tuple<PointType, ushort>(PointType.DIGITAL_OUTPUT, (ushort)adresa), (ushort)vrednost);
+            address = IPAddress.NetworkToHostOrder(address);
+            value = IPAddress.NetworkToHostOrder(value);
+            dict.Add(new Tuple<PointType, ushort>(PointType.DIGITAL_OUTPUT, (ushort)address), (ushort)value);
        
             return dict;
         }
