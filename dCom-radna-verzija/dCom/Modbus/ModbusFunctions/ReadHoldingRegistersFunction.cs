@@ -25,14 +25,43 @@ namespace Modbus.ModbusFunctions
         public override byte[] PackRequest()
         {
             //TO DO: IMPLEMENT
-            throw new NotImplementedException();
+            byte[] returnValue = new byte[12];
+            returnValue[1] = (byte)(CommandParameters.TransactionId);
+            returnValue[0] = (byte)(CommandParameters.TransactionId >> 8);
+            returnValue[3] = (byte)(CommandParameters.ProtocolId);
+            returnValue[2] = (byte)(CommandParameters.ProtocolId >> 8);
+            returnValue[5] = (byte)(CommandParameters.Length);
+            returnValue[4] = (byte)(CommandParameters.Length >> 8);
+            returnValue[6] = CommandParameters.UnitId;
+            returnValue[7] = CommandParameters.FunctionCode;
+            returnValue[9] = (byte)(((ModbusReadCommandParameters)CommandParameters).StartAddress);
+            returnValue[8] = (byte)(((ModbusReadCommandParameters)CommandParameters).StartAddress >> 8);
+            returnValue[11] = (byte)(((ModbusReadCommandParameters)CommandParameters).Quantity);
+            returnValue[10] = (byte)(((ModbusReadCommandParameters)CommandParameters).Quantity >> 8);
+            return returnValue;
         }
 
         /// <inheritdoc />
         public override Dictionary<Tuple<PointType, ushort>, ushort> ParseResponse(byte[] response)
         {
             //TO DO: IMPLEMENT
-            throw new NotImplementedException();
+            Dictionary<Tuple<PointType, ushort>, ushort> dict = new Dictionary<Tuple<PointType, ushort>, ushort>();
+ 
+            ModbusReadCommandParameters modbusRead = this.CommandParameters as ModbusReadCommandParameters;
+            
+            ushort address = modbusRead.StartAddress;
+            ushort byteCount = response[8];
+            ushort value;
+            
+            for (int i = 0; i < byteCount; i += 2)
+            {
+                value = BitConverter.ToUInt16(response, 9 + i); // konvertujemo niz bitova u unit
+                value = (ushort)IPAddress.NetworkToHostOrder((short)value); // citamo sa mreze
+                dict.Add(new Tuple<PointType, ushort>(PointType.ANALOG_OUTPUT, address), value); // dodajemo u recnik
+                address++; // prelazimo na sledecu adresu
+            }
+            
+            return dict;
         }
     }
 }

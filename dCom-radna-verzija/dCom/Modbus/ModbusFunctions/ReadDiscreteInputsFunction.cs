@@ -46,7 +46,7 @@ namespace Modbus.ModbusFunctions
             // bajtovi se prevode u recnik {adresa, vrednost}
             ModbusReadCommandParameters modbusRead = this.CommandParameters as ModbusReadCommandParameters;
             
-            Dictionary<Tuple<PointType, ushort>, ushort> dic = new Dictionary<Tuple<PointType, ushort>, ushort>();
+            Dictionary<Tuple<PointType, ushort>, ushort> dict = new Dictionary<Tuple<PointType, ushort>, ushort>();
             
             int counter = 0;//njega proveravamo da li je isti kao quantity sto je br bitova koje treba procitati iz requesta
             ushort address = modbusRead.StartAddress;// start point za citanje
@@ -60,7 +60,7 @@ namespace Modbus.ModbusFunctions
                 {
                     value = (ushort)(tempByte & mask); // and trenutnog bita i maske, pa prelazak dalje
                     tempByte >>= 1;
-                    dic.Add(new Tuple<PointType, ushort>(PointType.DIGITAL_INPUT, address), value); // dodavanje u recnik
+                    dict.Add(new Tuple<PointType, ushort>(PointType.DIGITAL_INPUT, address), value); // dodavanje u recnik
                     counter++;
                     address++;
                     if (counter == modbusRead.Quantity)   // provera da li smo zavrsili sa citanjem
@@ -70,7 +70,7 @@ namespace Modbus.ModbusFunctions
                 }
             }
 
-            return dic; // vraca recnik
+            return dict; // vraca recnik
         }
     }
 }
