@@ -27,6 +27,19 @@ namespace Modbus.ModbusFunctions
             Console.WriteLine("Request started");
             // ModbusReadCommandParameters nam treba
             byte[] recVal = new byte[12];
+
+            recVal[1] = (byte)(CommandParameters.TransactionId);
+            recVal[0] = (byte)(CommandParameters.TransactionId >> 8);
+            recVal[3] = (byte)(CommandParameters.ProtocolId);
+            recVal[2] = (byte)(CommandParameters.ProtocolId >> 8);
+            recVal[5] = (byte)(CommandParameters.Length);
+            recVal[4] = (byte)(CommandParameters.Length >> 8);
+            recVal[6] = CommandParameters.UnitId;
+            recVal[7] = CommandParameters.FunctionCode;
+            recVal[9] = (byte)(((ModbusReadCommandParameters)CommandParameters).StartAddress);
+            recVal[8] = (byte)(((ModbusReadCommandParameters)CommandParameters).StartAddress >> 8);
+            recVal[11] = (byte)(((ModbusReadCommandParameters)CommandParameters).Quantity);
+            recVal[10] = (byte)(((ModbusReadCommandParameters)CommandParameters).Quantity >> 8);
             //Head message
 
             // Data message
@@ -39,7 +52,23 @@ namespace Modbus.ModbusFunctions
         public override Dictionary<Tuple<PointType, ushort>, ushort> ParseResponse(byte[] response)
         {
             //TO DO: IMPLEMENT
-            throw new NotImplementedException();
+            Dictionary<Tuple<PointType, ushort>, ushort> dict = new Dictionary<Tuple<PointType, ushort>, ushort>();
+
+            ModbusReadCommandParameters modbusRead = this.CommandParameters as ModbusReadCommandParameters;
+
+            ushort address = modbusRead.StartAddress;
+            ushort byteCount = response[8];
+            ushort value;
+
+            for (int i = 0; i < byteCount; i += 2)
+            {
+                value = BitConverter.ToUInt16(response, 9 + i); // konvertujemo niz bitova u unit
+                value = (ushort)IPAddress.NetworkToHostOrder((short)value); // citamo sa mreze
+                dict.Add(new Tuple<PointType, ushort>(PointType.ANALOG_OUTPUT, address), value); // dodajemo u recnik
+                address++; // prelazimo na sledecu adresu
+            }
+
+            return dict;
         }
     }
 }
