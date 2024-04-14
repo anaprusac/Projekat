@@ -44,32 +44,34 @@ namespace Modbus.ModbusFunctions
         public override Dictionary<Tuple<PointType, ushort>, ushort> ParseResponse(byte[] response)
         {
             //TO DO: IMPLEMENT
+            // bajtovi se prevode u recnik {adresa, vrednost}
             ModbusReadCommandParameters modbusRead = this.CommandParameters as ModbusReadCommandParameters;
-            
+
             Dictionary<Tuple<PointType, ushort>, ushort> dic = new Dictionary<Tuple<PointType, ushort>, ushort>();
-            
-            int counter = 0;
-            ushort address = modbusRead.StartAddress;
-            ushort value;
-            byte maska = 1;
-            
+
+            int counter = 0;//njega proveravamo da li je isti kao quantity sto je br bitova koje treba procitati iz requesta
+            ushort address = modbusRead.StartAddress;// start point za citanje
+            ushort value;// ovo citamo
+            byte mask = 1;
+
             for (int i = 0; i < response[8]; i++)
             {
-                byte tempByte = response[9 + i];
+                byte tempByte = response[9 + i]; // odgovor pocinje od 9. bita, svaki bajt = 8 bita
                 for (int j = 0; j < 8; j++)
                 {
-                    value = (ushort)(tempByte & maska);
+                    value = (ushort)(tempByte & mask); // and trenutnog bita i maske, pa prelazak dalje
                     tempByte >>= 1;
-                    dic.Add(new Tuple<PointType, ushort>(PointType.DIGITAL_OUTPUT, address), value);
+                    dic.Add(new Tuple<PointType, ushort>(PointType.DIGITAL_INPUT, address), value); // dodavanje u recnik
                     counter++;
                     address++;
-                    if (counter == modbusRead.Quantity)
+                    if (counter == modbusRead.Quantity)   // provera da li smo zavrsili sa citanjem
                     {
                         break;
                     }
                 }
             }
-            return dic;
+
+            return dic; // vraca recnik
         }
     }
 }
